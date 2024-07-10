@@ -11,9 +11,8 @@
 Установка
 ---------
 В консоли (cmd.exe) склонировать проект c github в нужную папку:
-TODO: ЗАМЕНИТЬ НА ОКОНЧАТЕЛЬНЫЙ АДРЕС РЕПОЗИТОРИЯ!
 ```bash
-git clone https://github.com/unibasil/AcousticOntoEditor.git AcousticOntoEditor
+git clone https://github.com/silbermayden/AcousticOntoEditor.git AcousticOntoEditor
 cd AcousticOntoEditor
 git checkout develop
 ```
