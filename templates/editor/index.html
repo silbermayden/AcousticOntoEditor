@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>AcousticOntoEditor</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "vendor/bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.min.css' %}">
+
+    <script src="{% static 'js/jquery.slim.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/go.js' %}"></script>
+    <script src="{% static 'js/gojs-diagram.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+</head>
+<style>
+    html, body {
+        height: 100%; /* Устанавливаем высоту для всей страницы */
+        margin: 0; /* Убираем стандартные отступы */
+    }
+
+    .main-container {
+        max-height: 100vh;
+        height: 100vh;
+    }
+
+    .accordion-body {
+        padding: 0;
+    }
+
+    .accordion-item-body {
+        padding: 0;
+        margin-bottom: 0;
+    }
+
+    .accordion-button {
+        padding: 8px;
+    }
+
+    .scrollable {
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+
+    .max-height {
+        height: calc(100vh - 56px);
+    }
+
+    .no-overflow {
+        overflow: hidden;
+    }
+
+    #left-panel {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #ffe;
+        padding: 4px 8px;
+    }
+
+    .accordion-button {
+        background-color: #ffe;
+        padding: 4px 8px;
+    }
+
+    table.table tr td {
+        padding: 4px 8px;
+    }
+
+</style>
+<body>
+<div class="container-fluid main-container" style="max-height: 100vh">
+
+    {# Navbar #}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-dark bg-dark">
+
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">AcousticOntoEditor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="admin/">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="createDiagram()">Diagram</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="makeExport(this)">Export</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {# Workspace #}
+    <div id="left-panel" class="container-fluid no-overflow max-height">
+        <div class="row">
+            <div class="col-md-3 scrollable">
+                <div id="left-data-list" class="accordion accordion-flush">
+                    {# Аккордеон с данными будет здесь #}
+                </div>
+            </div>
+            <div id="right-panel" class="col-md-9">
+                <div id="go-diagram">
+                    {# Диаграмма будет здесь #}
+                    <div class="container-fluid">
+                        ...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="edit-item-modal" tabindex="-1" aria-labelledby="edit-item-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="edit-item-modal-label">Edit entity</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form>
+                    <div class="row mb-3">
+                        <label class="form-label col-sm-3" for="entity-id">ID</label>
+                        <div class="col-sm-9">
+                            <input id="entity-id" name="entity-id" type="text"
+                                   class="form-control form-control-sm" value="5" disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="form-label col-sm-3" for="entity-name">Name</label>
+                        <div class="col-sm-9">
+                            <input id="entity-name" name="entity-name" type="text"
+                                   class="form-control form-control-sm" value="Material">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label class="form-label col-sm-3" for="textarea">Description</label>
+                        <div class="col-sm-9">
+                            <textarea id="textarea" name="textarea" cols="40" rows="5"
+                                      class="form-control form-control-sm">Материал поверхности</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="form-label col-sm-3" for="fields-select">Fields</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <select id="fields-select" name="fields-select" class="form-select form-select-sm"
+                                        aria-label="Default select example">
+                                    <option  value="1">AbsorptionCoefficient</option>
+                                    <option value="2">Amplitude</option>
+                                    <option value="3">Azimuth</option>
+                                    <option value="4">Curvature</option>
+                                    <option value="5">Frequency</option>
+                                    <option selected value="6">Intensity</option>
+                                    <option value="7">Position</option>
+                                    <option value="8">Texture</option>
+                                    <option value="9">Zenith</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-primary"><i class="bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            AbsorptionCoefficient
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-field-btn" 
+                                    style="float:right;"><i class="bi-x"></i></button>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-9">
+                            Texture
+                            <button type="button" class="btn btn-sm btn-outline-danger delete-field-btn"
+                                    style="float:right;"><i class="bi-x"></i></button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="delete-item-modal" tabindex="-1" aria-labelledby="delete-item-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="edit-item-modal-label">Delete entity</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure to delete entity <strong>Material</strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" >Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
